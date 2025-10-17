@@ -1,0 +1,27 @@
+{
+  "name": "office",
+  "version": "0.1.0",
+  "description": "A FOSS alternative to Google Docs built on open standards like Markdown",
+  "main": "src/server/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node src/server/index.js",
+    "test": "node --test tests/**/*.test.js",
+    "start": "node src/server/index.js"
+  },
+  "keywords": [
+    "markdown",
+    "collaborative",
+    "document-editor",
+    "open-source",
+    "real-time",
+    "FOSS"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
