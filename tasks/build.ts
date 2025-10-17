@@ -17,8 +17,9 @@ if (!result.success) {
   process.exit(1);
 }
 
-// Copy HTML to public directory
+// Copy HTML and favicon to public directory
 await Bun.write("./public/index.html", await Bun.file("./src/client/index.html").text());
+await Bun.write("./public/favicon.svg", await Bun.file("./src/client/favicon.svg").text());
 
 console.log("✓ Build completed successfully");
 console.log(`✓ Generated ${result.outputs.length} files`);
