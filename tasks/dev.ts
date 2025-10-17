@@ -1,3 +1,4 @@
+#!/usr/bin/env bun
 // Development server with auto-rebuild and hot reload
 import { watch } from "fs";
 import { spawn } from "bun";
@@ -7,7 +8,7 @@ let serverProcess: ReturnType<typeof spawn> | null = null;
 // Build function
 async function build() {
   console.log("🔨 Building client...");
-  const buildProcess = spawn(["bun", "run", "build.ts"], {
+  const buildProcess = spawn(["bun", "run", "tasks/build.ts"], {
     stdout: "inherit",
     stderr: "inherit",
   });
@@ -56,7 +57,7 @@ const clientWatcher = watch(
 );
 
 // Watch build script
-const buildWatcher = watch("./build.ts", async (event, filename) => {
+const buildWatcher = watch("./tasks/build.ts", async (event, filename) => {
   if (filename) {
     console.log("\n🔨 Build script changed");
     await build();

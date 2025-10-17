@@ -4,3 +4,6 @@ node = "24"
 
 [env]
 _.path = "./node_modules/.bin"
+
+[task_config]
+includes = ["tasks"]

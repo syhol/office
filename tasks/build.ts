@@ -1,3 +1,4 @@
+#!/usr/bin/env bun
 // Build script for bundling the client app with Bun
 const result = await Bun.build({
   entrypoints: ["./src/client/index.tsx"],

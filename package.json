@@ -5,10 +5,10 @@
   "main": "src/server/index.ts",
   "type": "module",
   "scripts": {
-    "build": "bun run build.ts",
-    "dev": "bun run dev.ts",
+    "build": "bun run tasks/build.ts",
+    "dev": "bun run tasks/dev.ts",
     "test": "bun test",
-    "start": "bun run build.ts && bun run src/server/index.ts",
+    "start": "bun run tasks/build.ts && bun run src/server/index.ts",
     "format": "biome format --write .",
     "format:check": "biome format .",
     "lint": "biome lint --write .",

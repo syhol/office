@@ -91,7 +91,7 @@ Try editing this document!
   }, []);
 
   return (
-    <div style={{ background: "green", display: "flex", flexDirection: "column", height: "100vh" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <header
         style={{
           background: "#2563eb",
