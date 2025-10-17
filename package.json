@@ -28,6 +28,7 @@
   "license": "MIT",
   "dependencies": {
     "@mdxeditor/editor": "^3.47.0",
+    "elysia": "^1.4.12",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

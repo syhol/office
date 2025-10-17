@@ -1,137 +1,78 @@
+import { Elysia } from "elysia";
+import { staticPlugin } from "@elysiajs/static";
 import { SQLiteDocumentRepository } from "./repositories/SQLiteDocumentRepository";
 
 // Initialize repository
 const documentRepo = new SQLiteDocumentRepository();
 
-const server = Bun.serve({
-  port: 3001,
+const app = new Elysia()
+  .get("/api/documents", async () => {
+    const documents = await documentRepo.findAll();
+    return documents;
+  })
+  .get("/api/documents/:id", async ({ params, set }) => {
+    const document = await documentRepo.findById(params.id);
 
-  async fetch(req, server) {
-    const url = new URL(req.url);
-
-    // Dev-only: Trigger reload for all connected clients
-    if (url.pathname === "/_dev/reload" && req.method === "POST") {
-      server.publish("document-updates", JSON.stringify({ type: "reload" }));
-      return new Response("OK");
+    if (!document) {
+      set.status = 404;
+      return { error: "Document not found" };
     }
 
-    // API: List all documents
-    if (url.pathname === "/api/documents" && req.method === "GET") {
-      const documents = await documentRepo.findAll();
-      return new Response(JSON.stringify(documents), {
-        headers: { "Content-Type": "application/json" },
-      });
+    return document;
+  })
+  .post("/api/documents", async ({ body, set }) => {
+    const document = await documentRepo.create(body as any);
+    set.status = 201;
+    return document;
+  })
+  .put("/api/documents/:id", async ({ params, body, set }) => {
+    const document = await documentRepo.update(params.id, body as any);
+
+    if (!document) {
+      set.status = 404;
+      return { error: "Document not found" };
     }
 
-    // API: Get single document
-    if (url.pathname.match(/^\/api\/documents\/[^/]+$/) && req.method === "GET") {
-      const id = url.pathname.split("/").pop()!;
-      const document = await documentRepo.findById(id);
+    return document;
+  })
+  .delete("/api/documents/:id", async ({ params, set }) => {
+    const deleted = await documentRepo.delete(params.id);
 
-      if (!document) {
-        return new Response(JSON.stringify({ error: "Document not found" }), {
-          status: 404,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-
-      return new Response(JSON.stringify(document), {
-        headers: { "Content-Type": "application/json" },
-      });
+    if (!deleted) {
+      set.status = 404;
+      return { error: "Document not found" };
     }
 
-    // API: Create document
-    if (url.pathname === "/api/documents" && req.method === "POST") {
-      try {
-        const body = await req.json();
-        const document = await documentRepo.create(body);
-        return new Response(JSON.stringify(document), {
-          status: 201,
-          headers: { "Content-Type": "application/json" },
-        });
-      } catch (error) {
-        return new Response(JSON.stringify({ error: "Invalid JSON" }), {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-    }
-
-    // API: Update document
-    if (url.pathname.match(/^\/api\/documents\/[^/]+$/) && req.method === "PUT") {
-      try {
-        const id = url.pathname.split("/").pop()!;
-        const body = await req.json();
-        const document = await documentRepo.update(id, body);
-
-        if (!document) {
-          return new Response(JSON.stringify({ error: "Document not found" }), {
-            status: 404,
-            headers: { "Content-Type": "application/json" },
-          });
-        }
-
-        return new Response(JSON.stringify(document), {
-          headers: { "Content-Type": "application/json" },
-        });
-      } catch (error) {
-        return new Response(JSON.stringify({ error: "Invalid JSON" }), {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-    }
-
-    // API: Delete document
-    if (url.pathname.match(/^\/api\/documents\/[^/]+$/) && req.method === "DELETE") {
-      const id = url.pathname.split("/").pop()!;
-      const deleted = await documentRepo.delete(id);
-
-      if (!deleted) {
-        return new Response(JSON.stringify({ error: "Document not found" }), {
-          status: 404,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-
-      return new Response(JSON.stringify({ success: true }), {
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    // WebSocket upgrade for real-time collaboration
-    if (url.pathname === "/ws") {
-      if (server.upgrade(req)) {
-        return; // Connection upgraded to WebSocket
-      }
-      return new Response("WebSocket upgrade failed", { status: 400 });
-    }
-
-    // Serve static files from public directory
-    const filePath = url.pathname === "/" ? "/index.html" : url.pathname;
-    const file = Bun.file(`./public${filePath}`);
-
-    return new Response(file);
-  },
-
-  websocket: {
+    return { success: true };
+  })
+  .ws("/ws", {
     open(ws) {
       console.log("Client connected");
       ws.subscribe("document-updates");
     },
-
-    message(_ws, message) {
+    message(ws, message) {
       console.log("Received message:", message);
-
-      // Broadcast to all connected clients
-      server.publish("document-updates", message);
+      ws.publish("document-updates", message);
     },
-
     close(_ws) {
       console.log("Client disconnected");
     },
-  },
-});
+  })
+  .post("/_dev/reload", ({ server }) => {
+    server?.publish("document-updates", JSON.stringify({ type: "reload" }));
+    return "OK";
+  })
+  .get("/*", async ({ path }) => {
+    const filePath = path === "/" ? "/index.html" : path;
+    const file = Bun.file(`./public${filePath}`);
 
-console.log(`🚀 Office server running at http://localhost:${server.port}`);
-console.log(`📝 Open http://localhost:${server.port} in your browser`);
+    if (await file.exists()) {
+      return file;
+    }
+
+    return new Response("Not Found", { status: 404 });
+  })
+  .listen(3001);
+
+console.log(`🚀 Office server running at http://localhost:${app.server?.port}`);
+console.log(`📝 Open http://localhost:${app.server?.port} in your browser`);
