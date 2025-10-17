@@ -2,12 +2,13 @@
   "name": "office",
   "version": "0.1.0",
   "description": "A FOSS alternative to Google Docs built on open standards like Markdown",
-  "main": "src/server/index.js",
+  "main": "src/server/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "node src/server/index.js",
-    "test": "node --test tests/**/*.test.js",
-    "start": "node src/server/index.js"
+    "build": "bun run build.ts",
+    "dev": "bun run build.ts && bun run src/server/index.ts",
+    "test": "bun test",
+    "start": "bun run build.ts && bun run src/server/index.ts"
   },
   "keywords": [
     "markdown",
@@ -19,9 +20,14 @@
   ],
   "author": "",
   "license": "MIT",
-  "engines": {
-    "node": ">=18.0.0"
+  "dependencies": {
+    "@mdxeditor/editor": "^3.47.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2"
+  }
 }

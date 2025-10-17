@@ -12,6 +12,7 @@ yarn-error.log*
 # Build output
 dist/
 build/
+public/
 *.log
 
 # Editor directories and files

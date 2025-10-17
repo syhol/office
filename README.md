@@ -20,29 +20,47 @@ Office aims to provide a collaborative document editing experience that respects
 ```
 office/
 ├── src/
-│   ├── client/     # Frontend application
-│   ├── server/     # Backend server
+│   ├── client/     # React frontend with MDXEditor
+│   ├── server/     # Bun server with WebSocket support
 │   └── shared/     # Shared utilities and types
+├── public/         # Built static files (generated)
 ├── docs/           # Documentation
 └── tests/          # Test suites
 ```
 
 ## Tech Stack
 
-- **Frontend**: Modern JavaScript/HTML/CSS
-- **Backend**: Node.js
-- **Document Format**: Markdown with extensions
+- **Runtime**: Bun (fast JavaScript runtime and bundler)
+- **Frontend**: React + TypeScript
+- **Editor**: MDXEditor (rich markdown editing)
+- **Backend**: Bun server with native WebSocket support
+- **Document Format**: Markdown
 - **Real-time**: WebSockets for collaborative editing
 
 ## Getting Started
 
+### Prerequisites
+
+- [Bun](https://bun.sh) installed (v1.3.0+)
+- Or use [mise](https://mise.jdx.dev/) to automatically install the correct version
+
+### Installation & Running
+
 ```bash
 # Install dependencies
-npm install
+bun install
 
-# Run development server
-npm run dev
+# Build the frontend
+bun run build
+
+# Start the development server
+bun run dev
+
+# Or build and start in one command
+bun start
 ```
+
+The application will be available at `http://localhost:3001`
 
 ## Contributing
 
