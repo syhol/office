@@ -61,6 +61,14 @@ Try editing this document!
     };
 
     ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      // Handle live reload for dev
+      if (data.type === "reload") {
+        console.log("🔄 Reloading page...");
+        window.location.reload();
+      }
+
       // Handle remote updates (to be implemented with CRDT/OT)
       console.log("Received update:", event.data);
     };
@@ -83,7 +91,7 @@ Try editing this document!
   }, []);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+    <div style={{ background: "green", display: "flex", flexDirection: "column", height: "100vh" }}>
       <header
         style={{
           background: "#2563eb",

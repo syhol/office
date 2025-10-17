@@ -4,6 +4,12 @@ const server = Bun.serve({
   fetch(req, server) {
     const url = new URL(req.url);
 
+    // Dev-only: Trigger reload for all connected clients
+    if (url.pathname === "/_dev/reload" && req.method === "POST") {
+      server.publish("document-updates", JSON.stringify({ type: "reload" }));
+      return new Response("OK");
+    }
+
     // WebSocket upgrade for real-time collaboration
     if (url.pathname === "/ws") {
       if (server.upgrade(req)) {
