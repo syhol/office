@@ -25,14 +25,14 @@ const server = Bun.serve({
       ws.subscribe("document-updates");
     },
 
-    message(ws, message) {
+    message(_ws, message) {
       console.log("Received message:", message);
 
       // Broadcast to all connected clients
       server.publish("document-updates", message);
     },
 
-    close(ws) {
+    close(_ws) {
       console.log("Client disconnected");
     },
   },

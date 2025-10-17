@@ -8,7 +8,13 @@
     "build": "bun run build.ts",
     "dev": "bun run build.ts && bun run src/server/index.ts",
     "test": "bun test",
-    "start": "bun run build.ts && bun run src/server/index.ts"
+    "start": "bun run build.ts && bun run src/server/index.ts",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "lint": "biome lint --write .",
+    "lint:check": "biome lint .",
+    "check": "biome check --write .",
+    "check:ci": "biome check ."
   },
   "keywords": [
     "markdown",
@@ -26,6 +32,7 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.2.6",
     "@types/bun": "latest",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2"
