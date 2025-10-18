@@ -25,6 +25,7 @@ import {
 } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
 import { useEffect, useState } from "react";
+import { api } from "./api";
 
 export default function App() {
   const [markdown, setMarkdown] = useState(`# Welcome to Office
@@ -44,6 +45,43 @@ Try editing this document!
   const [wsStatus, setWsStatus] = useState<"connecting" | "connected" | "disconnected">(
     "connecting",
   );
+
+  // Example of using the type-safe API client
+  const testApi = async () => {
+    // Create a document - TypeScript knows the exact shape!
+    const { data: doc, error } = await api.api.documents.post({
+      title: "My Document",
+      content: "# Hello World",
+    });
+
+    if (error) {
+      console.error("Failed to create document:", error);
+      return;
+    }
+
+    console.log("Created document:", doc);
+
+    // Get all documents - fully typed response!
+    const { data: docs } = await api.api.documents.get();
+    console.log("All documents:", docs);
+
+    // Update document - TypeScript knows title and content are optional!
+    if (doc?.id) {
+      const { data: updated } = await api.api.documents({ id: doc.id }).put({
+        content: "# Updated content",
+      });
+      console.log("Updated document:", updated);
+
+      // Delete document
+      const { data: deleted } = await api.api.documents({ id: doc.id }).delete();
+      console.log("Deleted:", deleted);
+    }
+  };
+
+  // Call the test function when component mounts (for demonstration)
+  useEffect(() => {
+    testApi();
+  }, []);
 
   useEffect(() => {
     // WebSocket connection for real-time collaboration
