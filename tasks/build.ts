@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // Build script for bundling the client app with Bun
+
 const result = await Bun.build({
   entrypoints: ["./src/client/index.tsx"],
   outdir: "./public",
@@ -23,3 +24,5 @@ await Bun.write("./public/favicon.svg", await Bun.file("./src/client/favicon.svg
 
 console.log("✓ Build completed successfully");
 console.log(`✓ Generated ${result.outputs.length} files`);
+
+export {};
