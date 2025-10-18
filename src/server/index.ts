@@ -6,7 +6,7 @@ import { SQLiteDocumentRepository } from "./repositories/SQLiteDocumentRepositor
 const documentRepo = new SQLiteDocumentRepository();
 
 const app = new Elysia()
-  .use(staticPlugin({ assets: "public", prefix: "/" }))
+  // API routes first (before static plugin to avoid conflicts)
   .get("/api/documents", async () => {
     const documents = await documentRepo.findAll();
     return documents;
@@ -99,6 +99,18 @@ const app = new Elysia()
   .post("/_dev/reload", ({ server }) => {
     server?.publish("document-updates", JSON.stringify({ type: "reload" }));
     return "OK";
+  })
+  // Serve static files - simple and reliable
+  .get("/*", async ({ path, set }) => {
+    const filePath = path === "/" ? "/index.html" : path;
+    const file = Bun.file(`./public${filePath}`);
+
+    if (await file.exists()) {
+      return file;
+    }
+
+    set.status = 404;
+    return "Not Found";
   })
   .listen(3001);
 
