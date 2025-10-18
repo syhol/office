@@ -10,7 +10,7 @@ describe("Build script", () => {
     }
 
     // Run the build script once for all tests
-    await $`bun run build.ts`.quiet();
+    await $`bun run tasks/build`.quiet();
   });
 
   afterAll(() => {
